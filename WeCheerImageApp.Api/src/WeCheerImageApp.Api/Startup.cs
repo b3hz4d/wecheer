@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using WeCheerImageApp.Api.Services;
+using Amazon.Kinesis;
 
 namespace WeCheerImageApp.Api
 {
@@ -21,7 +22,7 @@ namespace WeCheerImageApp.Api
         {
             services.AddControllers();
             
-            // Add CORS
+            // CORS configuration
             services.AddCors(options =>
             {
                 options.AddDefaultPolicy(builder =>
@@ -32,7 +33,7 @@ namespace WeCheerImageApp.Api
                 });
             });
 
-            // Add Swagger
+            // API documentation
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo 
@@ -43,8 +44,26 @@ namespace WeCheerImageApp.Api
                 });
             });
 
-            // Register our services
+            // AWS service configuration
+            services.AddAWSService<IAmazonKinesis>();
+
+            // Service registration
             services.AddSingleton<IImageEventService, ImageEventService>();
+            
+            // Kinesis stream configuration
+            services.AddSingleton<KinesisEventProcessor>(sp =>
+            {
+                var kinesisClient = sp.GetRequiredService<IAmazonKinesis>();
+                var logger = sp.GetRequiredService<ILogger<KinesisEventProcessor>>();
+                var streamName = Configuration["KinesisStreamName"] ?? 
+                    Environment.GetEnvironmentVariable("KinesisStreamName") ?? 
+                    throw new InvalidOperationException("KinesisStreamName is not configured");
+                
+                return new KinesisEventProcessor(kinesisClient, streamName, logger);
+            });
+
+            // Background service registration
+            services.AddHostedService<KinesisBackgroundService>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -62,12 +81,12 @@ namespace WeCheerImageApp.Api
 
             app.UseAuthorization();
 
-            // Enable Swagger
+            // API documentation UI
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "WeCheer Image Event API V1");
-                c.RoutePrefix = string.Empty; // To serve the Swagger UI at the app's root
+                c.RoutePrefix = string.Empty;
             });
 
             app.UseEndpoints(endpoints =>

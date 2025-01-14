@@ -6,14 +6,16 @@
     <Nullable>enable</Nullable>
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
     <AWSProjectType>Lambda</AWSProjectType>
-    <!-- This property makes the build directory similar to a publish directory and helps the AWS .NET Lambda Mock Test Tool find project dependencies. -->
+    <!-- Build directory configuration for AWS Lambda deployment -->
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-    <!-- Generate ready to run images during publishing to improve cold start time. -->
+    <!-- Optimize cold start performance -->
     <PublishReadyToRun>true</PublishReadyToRun>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Amazon.Lambda.AspNetCoreServer" Version="8.1.1" />
     <PackageReference Include="AWSSDK.Core" Version="3.7.300.27" />
+    <PackageReference Include="AWSSDK.Kinesis" Version="3.7.301.7" />
+    <PackageReference Include="AWSSDK.Extensions.NETCore.Setup" Version="3.7.300" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
   </ItemGroup>
 </Project>
