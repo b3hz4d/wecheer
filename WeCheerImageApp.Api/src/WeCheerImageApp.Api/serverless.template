@@ -8,6 +8,10 @@
       "Type": "String",
       "Default": "*",
       "Description": "The origin to allow CORS requests from"
+    },
+    "KinesisStreamName": {
+      "Type": "String",
+      "Description": "Name of the Kinesis stream to consume events from"
     }
   },
 
@@ -22,11 +26,29 @@
         "Timeout": 30,
         "Role": null,
         "Policies": [
-          "AWSLambda_FullAccess"
+          "AWSLambda_FullAccess",
+          {
+            "Version": "2012-10-17",
+            "Statement": [
+              {
+                "Effect": "Allow",
+                "Action": [
+                  "kinesis:GetRecords",
+                  "kinesis:GetShardIterator",
+                  "kinesis:DescribeStream",
+                  "kinesis:ListShards"
+                ],
+                "Resource": {
+                  "Fn::Sub": "arn:aws:kinesis:${AWS::Region}:${AWS::AccountId}:stream/${KinesisStreamName}"
+                }
+              }
+            ]
+          }
         ],
         "Environment": {
           "Variables": {
-            "ASPNETCORE_ENVIRONMENT": "Production"
+            "ASPNETCORE_ENVIRONMENT": "Production",
+            "KinesisStreamName": { "Ref": "KinesisStreamName" }
           }
         },
         "Events": {
