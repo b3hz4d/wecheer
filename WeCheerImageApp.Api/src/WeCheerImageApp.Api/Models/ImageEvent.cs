@@ -8,7 +8,7 @@ namespace WeCheerImageApp.Api.Models
         public required string ImageUrl { get; set; }
         public required string Description { get; set; }
         
-        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWriting)]
+        [JsonIgnore]
         public DateTime ReceivedAt { get; set; }
     }
 } 
