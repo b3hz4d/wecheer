@@ -1,0 +1,71 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Transform": "AWS::Serverless-2016-10-31",
+  "Description": "WeCheer Image App - An AWS Serverless Application for handling image events.",
+  
+  "Parameters": {
+    "CorsOrigin": {
+      "Type": "String",
+      "Default": "*",
+      "Description": "The origin to allow CORS requests from"
+    }
+  },
+
+  "Resources": {
+    "AspNetCoreFunction": {
+      "Type": "AWS::Serverless::Function",
+      "Properties": {
+        "Handler": "WeCheerImageApp.Api::WeCheerImageApp.Api.LambdaEntryPoint::FunctionHandlerAsync",
+        "Runtime": "dotnet8",
+        "CodeUri": "",
+        "MemorySize": 512,
+        "Timeout": 30,
+        "Role": null,
+        "Policies": [
+          "AWSLambda_FullAccess"
+        ],
+        "Environment": {
+          "Variables": {
+            "ASPNETCORE_ENVIRONMENT": "Production"
+          }
+        },
+        "Events": {
+          "ProxyResource": {
+            "Type": "Api",
+            "Properties": {
+              "Path": "/{proxy+}",
+              "Method": "ANY"
+            }
+          },
+          "RootResource": {
+            "Type": "Api",
+            "Properties": {
+              "Path": "/",
+              "Method": "ANY"
+            }
+          }
+        }
+      }
+    },
+    "ApiGatewayApi": {
+      "Type": "AWS::Serverless::Api",
+      "Properties": {
+        "StageName": "Prod",
+        "Cors": {
+          "AllowMethods": "'GET,POST,OPTIONS'",
+          "AllowHeaders": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+          "AllowOrigin": { "Ref": "CorsOrigin" }
+        }
+      }
+    }
+  },
+
+  "Outputs": {
+    "ApiURL": {
+      "Description": "API endpoint URL for Prod environment",
+      "Value": {
+        "Fn::Sub": "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
+      }
+    }
+  }
+}

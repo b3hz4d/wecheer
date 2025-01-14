@@ -1,0 +1,55 @@
+.container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  color: white;
+}
+
+.content {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.image-card {
+  width: 100%;
+  color: rgba(255, 255, 255, 0.87);
+
+  .mat-mdc-card-title {
+    color: rgba(255, 255, 255, 0.87);
+  }
+
+  .mat-mdc-card-subtitle {
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+  }
+}
+
+.no-data-card {
+  text-align: center;
+  padding: 40px;
+  color: rgba(255, 255, 255, 0.87);
+}
+
+.stats-card {
+  color: rgba(255, 255, 255, 0.87);
+  
+  .stats {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    mat-icon {
+      color: #673ab7;
+    }
+  }
+}

@@ -1,0 +1,33 @@
+<div class="container">
+  <mat-toolbar color="primary">
+    <span>WeCheer Image Events</span>
+  </mat-toolbar>
+
+  <div class="content">
+    <mat-card *ngIf="latestEvent" class="image-card">
+      <mat-card-header>
+        <mat-card-title>Latest Image Event</mat-card-title>
+        <mat-card-subtitle>Received at: {{ latestEvent.receivedAt | date:'medium' }}</mat-card-subtitle>
+      </mat-card-header>
+      <img mat-card-image [src]="latestEvent.imageUrl" [alt]="latestEvent.description">
+      <mat-card-content>
+        <p>{{ latestEvent.description }}</p>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card *ngIf="!latestEvent" class="no-data-card">
+      <mat-card-content>
+        <p>No image events received yet.</p>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stats-card">
+      <mat-card-content>
+        <div class="stats">
+          <mat-icon>timeline</mat-icon>
+          <span>Events in the last hour: {{ eventCount }}</span>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
